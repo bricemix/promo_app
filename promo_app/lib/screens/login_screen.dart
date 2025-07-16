@@ -8,13 +8,29 @@ class LoginScreen extends StatelessWidget {
 
   Future<void> _signInGoogle() async {
     final googleSignIn = GoogleSignIn();
-    await googleSignIn.signIn();
-    onLogin();
+    try {
+      final account = await googleSignIn.signIn();
+      if (account != null) {
+        onLogin();
+      } else {
+        debugPrint('Google sign-in canceled or failed');
+      }
+    } catch (e) {
+      debugPrint('Google sign-in error: $e');
+    }
   }
 
   Future<void> _signInFacebook() async {
-    await FacebookAuth.instance.login();
-    onLogin();
+    try {
+      final result = await FacebookAuth.instance.login();
+      if (result.status == LoginStatus.success) {
+        onLogin();
+      } else {
+        debugPrint('Facebook sign-in failed: ${result.message}');
+      }
+    } catch (e) {
+      debugPrint('Facebook sign-in error: $e');
+    }
   }
 
   @override
